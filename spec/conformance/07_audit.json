@@ -1,0 +1,32 @@
+{
+  "description": "Hash-chained audit trail: events, linkage and byte-identical hashes across implementations",
+  "steps": [
+    {"tool": "list_audit", "args": {}, "label": "fresh workspace has a genesis entry",
+     "expect": {"equals": {"length": 1, "chain_valid": true, "entries.0.seq": 1, "entries.0.event": "workspace.started", "entries.0.prev_hash": "0000000000000000000000000000000000000000000000000000000000000000", "entries.0.data.signal_count": 50, "entries.0.at": "2026-03-02T09:00:00Z"}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-010", "SIG-011", "SIG-012"]}, "save": {"asm": "assessment_id"},
+     "expect": {"approx": {"score": 0.6, "confidence": 0.95}}},
+    {"tool": "propose_action", "args": {"assessment_id": "${asm}", "action": {"type": "increase_monitoring", "target": "resin R2"}, "proposed_by": "agent:triage"},
+     "expect": {"equals": {"status": "approved"}}},
+    {"tool": "propose_action", "args": {"assessment_id": "${asm}", "action": {"type": "expedite_order", "target": "resin R2 alternate supplier"}, "proposed_by": "agent:triage"}, "save": {"exp": "action_id"}},
+    {"tool": "approve_action", "args": {"action_id": "${exp}", "reviewer": "agent:triage", "reason": "self approval attempt"},
+     "expect": {"error": "POLICY_DENIED"}},
+    {"tool": "approve_action", "args": {"action_id": "${exp}", "reviewer": "mo.procurement", "reason": "Stock cover is six days."},
+     "expect": {"equals": {"status": "approved"}}},
+    {"tool": "list_audit", "args": {}, "label": "every transition, including the refused one, is recorded",
+     "save": {"head": "head_hash"},
+     "expect": {"equals": {"length": 7, "chain_valid": true,
+                           "entries.1.event": "assessment.created",
+                           "entries.2.event": "action.proposed",
+                           "entries.3.event": "action.auto_approved", "entries.3.actor": "policy:auto",
+                           "entries.4.event": "action.proposed",
+                           "entries.5.event": "decision.denied", "entries.5.data.attempted": "approve",
+                           "entries.6.event": "action.approved", "entries.6.actor": "mo.procurement"},
+                "matches": {"head_hash": "^[0-9a-f]{64}$"}}},
+    {"tool": "list_audit", "args": {"since_seq": 5, "limit": 1}, "label": "paging",
+     "expect": {"equals": {"length": 7, "entries.0.seq": 6}, "length": {"entries": 1}}},
+    {"resource": "audit://verify", "label": "verify resource agrees with list_audit",
+     "expect": {"equals": {"valid": true, "length": 7, "head_hash": "${head}", "first_bad_seq": null}}},
+    {"resource": "audit://log", "label": "log resource links each entry to its predecessor",
+     "expect": {"length": {"$": 7}, "equals": {"6.hash": "${head}", "6.data.reason": "Stock cover is six days."}}}
+  ]
+}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hitl-agent"
+version = "0.1.0"
+description = "Minimal human-in-the-loop triage agent that talks to an MCP server over stdio"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = ["mcp>=1.27,<2"]
+
+[project.optional-dependencies]
+llm = ["httpx>=0.27"]
+
+[project.scripts]
+hitl-agent = "hitl_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

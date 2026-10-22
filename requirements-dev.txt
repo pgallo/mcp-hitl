@@ -1,0 +1,9 @@
+# Installs both Python packages in editable mode plus the test and lint tools.
+-e ./python
+-e ./agent
+mcp==1.30.0
+jsonschema==4.26.0
+pytest==9.1.1
+anyio==4.15.1
+ruff==0.17.1
+mypy==2.4.0

@@ -1,0 +1,834 @@
+{
+  "description": "Synthetic operational signals for a fictional regional logistics network. All sites, suppliers and events are invented.",
+  "generated": "2026",
+  "signals": [
+    {
+      "id": "SIG-001",
+      "kind": "sensor_anomaly",
+      "severity": 5,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 94,
+      "observed_at": "2026-03-01T07:13:00Z",
+      "title": "Reefer R-17 temperature excursion of +9C for 47 minutes",
+      "summary": "Reefer unit R-17 in bay K3 reported a sustained temperature excursion of +9C above setpoint for 47 minutes before recovering.",
+      "tags": [
+        "cold-chain",
+        "reefer",
+        "temperature",
+        "r-17"
+      ]
+    },
+    {
+      "id": "SIG-002",
+      "kind": "sensor_anomaly",
+      "severity": 4,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "wms",
+      "source_reliability": 88,
+      "observed_at": "2026-03-01T08:26:00Z",
+      "title": "Automatic quality hold on temperature-sensitive pallets in bay K3",
+      "summary": "The warehouse system placed 22 temperature-sensitive pallets in bay K3 on quality hold after the R-17 excursion.",
+      "tags": [
+        "cold-chain",
+        "quality-hold",
+        "bay-k3"
+      ]
+    },
+    {
+      "id": "SIG-003",
+      "kind": "sensor_anomaly",
+      "severity": 3,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "manual_report",
+      "source_reliability": 58,
+      "observed_at": "2026-03-01T09:39:00Z",
+      "title": "Shift lead reports compressor noise on reefer R-17",
+      "summary": "Night shift lead reports intermittent grinding noise from the R-17 compressor and frost build-up on the evaporator.",
+      "tags": [
+        "cold-chain",
+        "reefer",
+        "compressor",
+        "r-17"
+      ]
+    },
+    {
+      "id": "SIG-004",
+      "kind": "supplier_notice",
+      "severity": 2,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "supplier_portal",
+      "source_reliability": 80,
+      "observed_at": "2026-03-01T10:52:00Z",
+      "title": "SUP-305 backorders compressor part C-55 for three weeks",
+      "summary": "Supplier SUP-305 announced a three week backorder on compressor part C-55 used in the R-series reefer units.",
+      "tags": [
+        "sup-305",
+        "spare-parts",
+        "compressor",
+        "reefer"
+      ]
+    },
+    {
+      "id": "SIG-005",
+      "kind": "delay",
+      "severity": 4,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 91,
+      "observed_at": "2026-03-01T11:05:00Z",
+      "title": "Berth wait at Orlin terminal 2 extended to 36 hours",
+      "summary": "Vessel arrival data shows average berth wait at terminal 2 rising from 8 to 36 hours over two days.",
+      "tags": [
+        "port",
+        "congestion",
+        "berth",
+        "terminal-2"
+      ]
+    },
+    {
+      "id": "SIG-006",
+      "kind": "customs_hold",
+      "severity": 4,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "customs_system",
+      "source_reliability": 93,
+      "observed_at": "2026-03-01T12:18:00Z",
+      "title": "Customs inspection backlog holds 140 containers",
+      "summary": "The customs inspection queue at Orlin holds 140 containers, 31 of them bound for the network.",
+      "tags": [
+        "port",
+        "customs",
+        "inspection",
+        "backlog"
+      ]
+    },
+    {
+      "id": "SIG-007",
+      "kind": "weather",
+      "severity": 3,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "weather_feed",
+      "source_reliability": 85,
+      "observed_at": "2026-03-01T13:31:00Z",
+      "title": "Gale warning for Orlin approaches for the next 48 hours",
+      "summary": "Marine forecast issues a gale warning for the Orlin approaches, pilot boarding may be suspended.",
+      "tags": [
+        "port",
+        "gale",
+        "marine-forecast"
+      ]
+    },
+    {
+      "id": "SIG-008",
+      "kind": "delay",
+      "severity": 3,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-VARDEN",
+      "source": "partner_email",
+      "source_reliability": 62,
+      "observed_at": "2026-03-01T14:44:00Z",
+      "title": "Drayage partner reports 40 percent truck shortfall",
+      "summary": "A drayage partner reports it can cover only 60 percent of booked container pickups this week.",
+      "tags": [
+        "drayage",
+        "capacity",
+        "port"
+      ]
+    },
+    {
+      "id": "SIG-009",
+      "kind": "delay",
+      "severity": 2,
+      "site": "HUB-VARDEN",
+      "lane": "ORLIN-VARDEN",
+      "source": "wms",
+      "source_reliability": 86,
+      "observed_at": "2026-03-01T15:57:00Z",
+      "title": "Inbound loads from Orlin running 18 hours behind notice",
+      "summary": "Advance shipping notices from Orlin are running 18 hours behind on average at the Varden cross-dock.",
+      "tags": [
+        "inbound",
+        "asn",
+        "cross-dock"
+      ]
+    },
+    {
+      "id": "SIG-010",
+      "kind": "supplier_notice",
+      "severity": 3,
+      "site": "DC-TAMSK",
+      "lane": null,
+      "source": "supplier_portal",
+      "source_reliability": 90,
+      "observed_at": "2026-03-01T16:10:00Z",
+      "title": "SUP-214 issues force majeure notice on resin grade R2",
+      "summary": "Supplier SUP-214 declared force majeure on resin grade R2 deliveries for the next 30 days.",
+      "tags": [
+        "sup-214",
+        "resin",
+        "force-majeure"
+      ]
+    },
+    {
+      "id": "SIG-011",
+      "kind": "supplier_notice",
+      "severity": 3,
+      "site": "DC-TAMSK",
+      "lane": null,
+      "source": "wms",
+      "source_reliability": 88,
+      "observed_at": "2026-03-01T17:23:00Z",
+      "title": "Resin R2 stock cover down to 6 days at Tamsk",
+      "summary": "On-hand resin R2 at the Tamsk distribution center covers 6 days of planned outbound volume.",
+      "tags": [
+        "sup-214",
+        "resin",
+        "stock-cover"
+      ]
+    },
+    {
+      "id": "SIG-012",
+      "kind": "supplier_notice",
+      "severity": 3,
+      "site": "DC-TAMSK",
+      "lane": null,
+      "source": "procurement_feed",
+      "source_reliability": 92,
+      "observed_at": "2026-03-01T18:36:00Z",
+      "title": "Spot price index for resin R2 up 22 percent week on week",
+      "summary": "The procurement feed shows the resin R2 spot index up 22 percent week on week, consistent with a supply shock.",
+      "tags": [
+        "sup-214",
+        "resin",
+        "price-index"
+      ]
+    },
+    {
+      "id": "SIG-013",
+      "kind": "delay",
+      "severity": 5,
+      "site": "HUB-ISEN",
+      "lane": null,
+      "source": "manual_report",
+      "source_reliability": 35,
+      "observed_at": "2026-03-01T19:49:00Z",
+      "title": "Unverified report of fire near the air cargo apron",
+      "summary": "A driver radioed an unverified report of smoke near the Isen air cargo apron. No alarm has been raised.",
+      "tags": [
+        "air-cargo",
+        "fire",
+        "unverified"
+      ]
+    },
+    {
+      "id": "SIG-014",
+      "kind": "weather",
+      "severity": 4,
+      "site": "HUB-VARDEN",
+      "lane": "VARDEN-TAMSK",
+      "source": "weather_feed",
+      "source_reliability": 87,
+      "observed_at": "2026-03-01T20:02:00Z",
+      "title": "Flood warning closes the river road on lane Varden-Tamsk",
+      "summary": "Regional flood warning: the river road segment of lane Varden-Tamsk is closed for at least 24 hours.",
+      "tags": [
+        "flood",
+        "road-closure",
+        "lane"
+      ]
+    },
+    {
+      "id": "SIG-015",
+      "kind": "delay",
+      "severity": 4,
+      "site": "HUB-VARDEN",
+      "lane": "VARDEN-TAMSK",
+      "source": "telematics",
+      "source_reliability": 92,
+      "observed_at": "2026-03-01T21:15:00Z",
+      "title": "Twelve trucks stationary on lane Varden-Tamsk",
+      "summary": "Telematics shows twelve trucks stationary for more than 90 minutes on the Varden-Tamsk lane.",
+      "tags": [
+        "flood",
+        "stationary",
+        "lane"
+      ]
+    },
+    {
+      "id": "SIG-016",
+      "kind": "delay",
+      "severity": 3,
+      "site": "HUB-VARDEN",
+      "lane": "VARDEN-TAMSK",
+      "source": "manual_report",
+      "source_reliability": 60,
+      "observed_at": "2026-03-01T22:28:00Z",
+      "title": "Driver reports detour adds 3 hours to Varden-Tamsk",
+      "summary": "A driver reports the signed detour around the river road adds about 3 hours per trip.",
+      "tags": [
+        "flood",
+        "detour",
+        "lane"
+      ]
+    },
+    {
+      "id": "SIG-017",
+      "kind": "supplier_notice",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "supplier_portal",
+      "source_reliability": 83,
+      "observed_at": "2026-03-01T23:41:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 14 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-018",
+      "kind": "delay",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "wms",
+      "source_reliability": 87,
+      "observed_at": "2026-03-02T00:54:00Z",
+      "title": "Picking wave 312 closed 47 minutes late",
+      "summary": "Outbound picking wave 312 closed 47 minutes after cut-off.",
+      "tags": [
+        "picking",
+        "cut-off"
+      ]
+    },
+    {
+      "id": "SIG-019",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "partner_email",
+      "source_reliability": 58,
+      "observed_at": "2026-03-02T01:07:00Z",
+      "title": "Carrier 742 requests revised pickup window",
+      "summary": "Carrier 742 asked to shift its daily pickup window by 9 minutes.",
+      "tags": [
+        "carrier",
+        "pickup-window"
+      ]
+    },
+    {
+      "id": "SIG-020",
+      "kind": "supplier_notice",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-KESSEL",
+      "source": "supplier_portal",
+      "source_reliability": 78,
+      "observed_at": "2026-03-02T02:20:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 48 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-021",
+      "kind": "weather",
+      "severity": 2,
+      "site": "HUB-ISEN",
+      "lane": "ISEN-VARDEN",
+      "source": "weather_feed",
+      "source_reliability": 85,
+      "observed_at": "2026-03-02T03:33:00Z",
+      "title": "Fog advisory may slow yard moves",
+      "summary": "Visibility forecast below 200 m for the early shift, yard moves may slow by 55 percent.",
+      "tags": [
+        "fog",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-022",
+      "kind": "sensor_anomaly",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 91,
+      "observed_at": "2026-03-02T04:46:00Z",
+      "title": "Door-open alert on trailer 178 for 36 seconds",
+      "summary": "Trailer 178 reported a rear door open event lasting 36 seconds at a scheduled stop.",
+      "tags": [
+        "door",
+        "trailer"
+      ]
+    },
+    {
+      "id": "SIG-023",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-KESSEL",
+      "source": "partner_email",
+      "source_reliability": 63,
+      "observed_at": "2026-03-02T05:59:00Z",
+      "title": "Carrier 853 requests revised pickup window",
+      "summary": "Carrier 853 asked to shift its daily pickup window by 32 minutes.",
+      "tags": [
+        "carrier",
+        "pickup-window"
+      ]
+    },
+    {
+      "id": "SIG-024",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "supplier_portal",
+      "source_reliability": 85,
+      "observed_at": "2026-03-02T06:12:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 38 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-025",
+      "kind": "sensor_anomaly",
+      "severity": 2,
+      "site": "HUB-ISEN",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 92,
+      "observed_at": "2026-03-02T07:25:00Z",
+      "title": "Low battery on GPS tracker 878",
+      "summary": "GPS tracker 878 reports battery below 15 percent, position updates may thin out.",
+      "tags": [
+        "tracker",
+        "battery"
+      ]
+    },
+    {
+      "id": "SIG-026",
+      "kind": "weather",
+      "severity": 2,
+      "site": "DC-TAMSK",
+      "lane": "KESSEL-TAMSK",
+      "source": "weather_feed",
+      "source_reliability": 84,
+      "observed_at": "2026-03-02T08:38:00Z",
+      "title": "Fog advisory may slow yard moves",
+      "summary": "Visibility forecast below 200 m for the early shift, yard moves may slow by 15 percent.",
+      "tags": [
+        "fog",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-027",
+      "kind": "sensor_anomaly",
+      "severity": 1,
+      "site": "HUB-VARDEN",
+      "lane": "ISEN-VARDEN",
+      "source": "telematics",
+      "source_reliability": 93,
+      "observed_at": "2026-03-02T09:51:00Z",
+      "title": "Door-open alert on trailer 224 for 26 seconds",
+      "summary": "Trailer 224 reported a rear door open event lasting 26 seconds at a scheduled stop.",
+      "tags": [
+        "door",
+        "trailer"
+      ]
+    },
+    {
+      "id": "SIG-028",
+      "kind": "supplier_notice",
+      "severity": 2,
+      "site": "DC-TAMSK",
+      "lane": "KESSEL-TAMSK",
+      "source": "supplier_portal",
+      "source_reliability": 90,
+      "observed_at": "2026-03-02T10:04:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 47 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-029",
+      "kind": "sensor_anomaly",
+      "severity": 1,
+      "site": "HUB-ISEN",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 94,
+      "observed_at": "2026-03-02T11:17:00Z",
+      "title": "Door-open alert on trailer 247 for 38 seconds",
+      "summary": "Trailer 247 reported a rear door open event lasting 38 seconds at a scheduled stop.",
+      "tags": [
+        "door",
+        "trailer"
+      ]
+    },
+    {
+      "id": "SIG-030",
+      "kind": "delay",
+      "severity": 1,
+      "site": "DC-TAMSK",
+      "lane": null,
+      "source": "wms",
+      "source_reliability": 88,
+      "observed_at": "2026-03-02T12:30:00Z",
+      "title": "Picking wave 647 closed 47 minutes late",
+      "summary": "Outbound picking wave 647 closed 47 minutes after cut-off.",
+      "tags": [
+        "picking",
+        "cut-off"
+      ]
+    },
+    {
+      "id": "SIG-031",
+      "kind": "sensor_anomaly",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "telematics",
+      "source_reliability": 91,
+      "observed_at": "2026-03-02T13:43:00Z",
+      "title": "Low battery on GPS tracker 720",
+      "summary": "GPS tracker 720 reports battery below 15 percent, position updates may thin out.",
+      "tags": [
+        "tracker",
+        "battery"
+      ]
+    },
+    {
+      "id": "SIG-032",
+      "kind": "customs_hold",
+      "severity": 1,
+      "site": "HUB-ISEN",
+      "lane": "ISEN-VARDEN",
+      "source": "customs_system",
+      "source_reliability": 94,
+      "observed_at": "2026-03-02T14:56:00Z",
+      "title": "Document query on shipment 413",
+      "summary": "Customs requested a corrected commercial invoice for shipment 413.",
+      "tags": [
+        "customs",
+        "documents"
+      ]
+    },
+    {
+      "id": "SIG-033",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "supplier_portal",
+      "source_reliability": 88,
+      "observed_at": "2026-03-02T15:09:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 23 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-034",
+      "kind": "sensor_anomaly",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "telematics",
+      "source_reliability": 90,
+      "observed_at": "2026-03-02T16:22:00Z",
+      "title": "Door-open alert on trailer 539 for 21 seconds",
+      "summary": "Trailer 539 reported a rear door open event lasting 21 seconds at a scheduled stop.",
+      "tags": [
+        "door",
+        "trailer"
+      ]
+    },
+    {
+      "id": "SIG-035",
+      "kind": "delay",
+      "severity": 2,
+      "site": "HUB-ISEN",
+      "lane": null,
+      "source": "telematics",
+      "source_reliability": 95,
+      "observed_at": "2026-03-02T17:35:00Z",
+      "title": "Trailer 571 departed 44 minutes late",
+      "summary": "Trailer 571 left the yard 44 minutes after its planned departure slot.",
+      "tags": [
+        "departure",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-036",
+      "kind": "delay",
+      "severity": 2,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "manual_report",
+      "source_reliability": 58,
+      "observed_at": "2026-03-01T06:48:00Z",
+      "title": "Forklift 900 out of service for 26 minutes",
+      "summary": "Forklift 900 was out of service for 26 minutes for a hydraulic check.",
+      "tags": [
+        "forklift",
+        "equipment"
+      ]
+    },
+    {
+      "id": "SIG-037",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "supplier_portal",
+      "source_reliability": 83,
+      "observed_at": "2026-03-01T07:01:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 27 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-038",
+      "kind": "supplier_notice",
+      "severity": 2,
+      "site": "HUB-ISEN",
+      "lane": "ISEN-VARDEN",
+      "source": "partner_email",
+      "source_reliability": 67,
+      "observed_at": "2026-03-01T08:14:00Z",
+      "title": "Carrier 315 requests revised pickup window",
+      "summary": "Carrier 315 asked to shift its daily pickup window by 14 minutes.",
+      "tags": [
+        "carrier",
+        "pickup-window"
+      ]
+    },
+    {
+      "id": "SIG-039",
+      "kind": "weather",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "weather_feed",
+      "source_reliability": 86,
+      "observed_at": "2026-03-01T09:27:00Z",
+      "title": "Fog advisory may slow yard moves",
+      "summary": "Visibility forecast below 200 m for the early shift, yard moves may slow by 53 percent.",
+      "tags": [
+        "fog",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-040",
+      "kind": "weather",
+      "severity": 2,
+      "site": "HUB-KESSEL",
+      "lane": "KESSEL-TAMSK",
+      "source": "weather_feed",
+      "source_reliability": 82,
+      "observed_at": "2026-03-01T10:40:00Z",
+      "title": "Fog advisory may slow yard moves",
+      "summary": "Visibility forecast below 200 m for the early shift, yard moves may slow by 54 percent.",
+      "tags": [
+        "fog",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-041",
+      "kind": "delay",
+      "severity": 2,
+      "site": "HUB-ISEN",
+      "lane": "ISEN-VARDEN",
+      "source": "telematics",
+      "source_reliability": 91,
+      "observed_at": "2026-03-01T11:53:00Z",
+      "title": "Trailer 298 departed 31 minutes late",
+      "summary": "Trailer 298 left the yard 31 minutes after its planned departure slot.",
+      "tags": [
+        "departure",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-042",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-KESSEL",
+      "lane": null,
+      "source": "partner_email",
+      "source_reliability": 60,
+      "observed_at": "2026-03-01T12:06:00Z",
+      "title": "Carrier 787 requests revised pickup window",
+      "summary": "Carrier 787 asked to shift its daily pickup window by 49 minutes.",
+      "tags": [
+        "carrier",
+        "pickup-window"
+      ]
+    },
+    {
+      "id": "SIG-043",
+      "kind": "delay",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-KESSEL",
+      "source": "telematics",
+      "source_reliability": 93,
+      "observed_at": "2026-03-01T13:19:00Z",
+      "title": "Trailer 801 departed 9 minutes late",
+      "summary": "Trailer 801 left the yard 9 minutes after its planned departure slot.",
+      "tags": [
+        "departure",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-044",
+      "kind": "supplier_notice",
+      "severity": 1,
+      "site": "HUB-VARDEN",
+      "lane": "ISEN-VARDEN",
+      "source": "supplier_portal",
+      "source_reliability": 81,
+      "observed_at": "2026-03-01T14:32:00Z",
+      "title": "SUP-118 pallet price update effective next month",
+      "summary": "Supplier SUP-118 published a 20 percent pallet price adjustment effective next month.",
+      "tags": [
+        "sup-118",
+        "pallets",
+        "price"
+      ]
+    },
+    {
+      "id": "SIG-045",
+      "kind": "sensor_anomaly",
+      "severity": 2,
+      "site": "DC-TAMSK",
+      "lane": "KESSEL-TAMSK",
+      "source": "telematics",
+      "source_reliability": 91,
+      "observed_at": "2026-03-01T15:45:00Z",
+      "title": "Door-open alert on trailer 916 for 17 seconds",
+      "summary": "Trailer 916 reported a rear door open event lasting 17 seconds at a scheduled stop.",
+      "tags": [
+        "door",
+        "trailer"
+      ]
+    },
+    {
+      "id": "SIG-046",
+      "kind": "delay",
+      "severity": 1,
+      "site": "DC-TAMSK",
+      "lane": "KESSEL-TAMSK",
+      "source": "telematics",
+      "source_reliability": 95,
+      "observed_at": "2026-03-01T16:58:00Z",
+      "title": "Trailer 437 departed 46 minutes late",
+      "summary": "Trailer 437 left the yard 46 minutes after its planned departure slot.",
+      "tags": [
+        "departure",
+        "yard"
+      ]
+    },
+    {
+      "id": "SIG-047",
+      "kind": "customs_hold",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-KESSEL",
+      "source": "customs_system",
+      "source_reliability": 92,
+      "observed_at": "2026-03-01T17:11:00Z",
+      "title": "Document query on shipment 246",
+      "summary": "Customs requested a corrected commercial invoice for shipment 246.",
+      "tags": [
+        "customs",
+        "documents"
+      ]
+    },
+    {
+      "id": "SIG-048",
+      "kind": "sensor_anomaly",
+      "severity": 1,
+      "site": "DC-TAMSK",
+      "lane": "KESSEL-TAMSK",
+      "source": "telematics",
+      "source_reliability": 90,
+      "observed_at": "2026-03-01T18:24:00Z",
+      "title": "Low battery on GPS tracker 907",
+      "summary": "GPS tracker 907 reports battery below 15 percent, position updates may thin out.",
+      "tags": [
+        "tracker",
+        "battery"
+      ]
+    },
+    {
+      "id": "SIG-049",
+      "kind": "delay",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": "ORLIN-KESSEL",
+      "source": "wms",
+      "source_reliability": 84,
+      "observed_at": "2026-03-01T19:37:00Z",
+      "title": "Picking wave 166 closed 14 minutes late",
+      "summary": "Outbound picking wave 166 closed 14 minutes after cut-off.",
+      "tags": [
+        "picking",
+        "cut-off"
+      ]
+    },
+    {
+      "id": "SIG-050",
+      "kind": "delay",
+      "severity": 2,
+      "site": "PORT-ORLIN",
+      "lane": null,
+      "source": "wms",
+      "source_reliability": 85,
+      "observed_at": "2026-03-01T20:50:00Z",
+      "title": "Picking wave 366 closed 49 minutes late",
+      "summary": "Outbound picking wave 366 closed 49 minutes after cut-off.",
+      "tags": [
+        "picking",
+        "cut-off"
+      ]
+    }
+  ]
+}

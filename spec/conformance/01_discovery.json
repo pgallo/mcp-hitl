@@ -1,0 +1,15 @@
+{
+  "description": "Tool, resource and prompt surface matches the spec, including normalized schemas",
+  "steps": [
+    {"list": "tools", "label": "tools/list matches spec/tools.json",
+     "expect": {"length": {"names": 8}, "contains": {"names": "propose_action"}}},
+    {"list": "resources", "label": "resources/list",
+     "expect": {"equals": {"items": [["audit://log", "audit-log", "application/json"], ["audit://verify", "audit-verify", "application/json"], ["policy://current", "approval-policy", "application/json"]]}}},
+    {"list": "prompts", "label": "prompts/list",
+     "expect": {"equals": {"items": [{"name": "triage", "arguments": [["site", false]]}]}}},
+    {"prompt": "triage", "args": {"site": "HUB-KESSEL"}, "label": "triage prompt renders with a site",
+     "expect": {"equals": {"role": "user"}, "contains": {"text": "site HUB-KESSEL"}}},
+    {"prompt": "triage", "label": "triage prompt renders without arguments",
+     "expect": {"contains": {"text": "all sites"}, "not_contains": {"text": "{{scope}}"}}}
+  ]
+}

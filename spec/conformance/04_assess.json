@@ -1,0 +1,23 @@
+{
+  "description": "Score, confidence, bands and the single-source cap",
+  "steps": [
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001", "SIG-002", "SIG-003"]}, "label": "corroborated cold-chain incident",
+     "expect": {"equals": {"assessment_id": "ASM-0001", "band": "critical", "created_at": "2026-03-02T09:00:01Z", "factors.distinct_sources": 3, "factors.coherence": 1},
+                "approx": {"score": 0.86, "confidence": 0.9}, "length": {"rationale": 3}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-013"]}, "label": "severe but single unreliable source",
+     "expect": {"equals": {"band": "critical"}, "approx": {"score": 0.84, "confidence": 0.475},
+                "contains": {"rationale": "Low source reliability: treat as unverified"}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001"]}, "label": "reliable single source is capped at 0.6",
+     "expect": {"approx": {"confidence": 0.6}, "contains": {"rationale": "Single-source cap: confidence limited to 0.6 until corroborated"}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-005", "SIG-006", "SIG-007", "SIG-008", "SIG-009"]}, "label": "partially coherent port congestion",
+     "expect": {"approx": {"score": 0.792, "confidence": 0.857, "factors.coherence": 0.7, "factors.mean_reliability": 83.4}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-014", "SIG-015", "SIG-016"]}, "label": "rounding to four decimals is identical",
+     "expect": {"equals": {"band": "high"}, "approx": {"score": 0.74, "confidence": 0.8983, "factors.mean_severity": 3.6667, "factors.mean_reliability": 79.6667}}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001", "SIG-001"]}, "label": "duplicate ids rejected",
+     "expect": {"error": "INVALID_ARGUMENT"}},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001", "SIG-999"]}, "label": "unknown id rejected",
+     "expect": {"error": "NOT_FOUND", "error_contains": "SIG-999"}},
+    {"tool": "list_audit", "args": {}, "label": "failed assessments leave no audit trace",
+     "expect": {"equals": {"length": 6, "chain_valid": true, "entries.0.event": "workspace.started", "entries.-1.subject": "ASM-0005"}}}
+  ]
+}

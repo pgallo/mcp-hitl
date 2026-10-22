@@ -1,0 +1,9 @@
+{
+  "description": "Signal lookup and not-found handling",
+  "steps": [
+    {"tool": "get_signal", "args": {"id": "SIG-013"}, "label": "full signal record",
+     "expect": {"equals": {"id": "SIG-013", "kind": "delay", "severity": 5, "site": "HUB-ISEN", "lane": null, "source": "manual_report", "source_reliability": 35}, "contains": {"tags": "unverified"}}},
+    {"tool": "get_signal", "args": {"id": "SIG-404"}, "label": "unknown id is a domain error",
+     "expect": {"error": "NOT_FOUND", "error_contains": "SIG-404"}}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "description": "Ranking, filters, limits and tie-breaking",
+  "steps": [
+    {"tool": "search_signals", "args": {"query": "reefer compressor"}, "label": "weighted keyword ranking",
+     "expect": {"equals": {"total": 3, "results.0.id": "SIG-003", "results.0.score": 11, "results.1.id": "SIG-004", "results.2.id": "SIG-001"}}},
+    {"tool": "search_signals", "args": {"query": "", "filters": {"site": "HUB-KESSEL", "min_severity": 3}}, "label": "empty query with site and severity filters",
+     "expect": {"equals": {"total": 3, "results.0.id": "SIG-001", "results.2.id": "SIG-003"}, "each": {"results": {"site": "HUB-KESSEL", "score": 0}}}},
+    {"tool": "search_signals", "args": {"query": "flood lane", "limit": 2}, "label": "limit truncates results but not total",
+     "expect": {"equals": {"total": 3, "results.0.id": "SIG-014", "results.0.score": 12}, "length": {"results": 2}}},
+    {"tool": "search_signals", "args": {"filters": {"kind": ["customs_hold"], "since": "2026-03-02T00:00:00Z"}}, "label": "kind and since filters",
+     "expect": {"equals": {"total": 1, "results.0.id": "SIG-032"}}},
+    {"tool": "search_signals", "args": {"query": "RESIN"}, "label": "matching is case-insensitive",
+     "expect": {"equals": {"total": 3}, "each": {"results": {"site": "DC-TAMSK"}}}},
+    {"tool": "search_signals", "args": {"query": "zeppelin"}, "label": "no match returns an empty page",
+     "expect": {"equals": {"total": 0, "results": []}}},
+    {"tool": "search_signals", "args": {}, "label": "default limit is 10 over the whole dataset",
+     "expect": {"equals": {"total": 50, "results.0.id": "SIG-001", "results.1.id": "SIG-013"}, "length": {"results": 10}}}
+  ]
+}

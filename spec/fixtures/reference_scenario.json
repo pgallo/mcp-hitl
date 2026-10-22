@@ -1,0 +1,97 @@
+{
+  "description": "Reference scenario replayed by both unit test suites against their in-process workspace. The resulting audit chain must hash to head_hash.",
+  "clock": "2026-03-02T09:00:00Z",
+  "steps": [
+    [
+      "assess",
+      {
+        "signal_ids": [
+          "SIG-001",
+          "SIG-002",
+          "SIG-003"
+        ]
+      }
+    ],
+    [
+      "propose_action",
+      {
+        "assessment_id": "ASM-0001",
+        "action": {
+          "type": "notify_team",
+          "target": "HUB-KESSEL"
+        },
+        "proposed_by": "agent:triage"
+      }
+    ],
+    [
+      "propose_action",
+      {
+        "assessment_id": "ASM-0001",
+        "action": {
+          "type": "quarantine_stock",
+          "target": "bay K3",
+          "note": "22 pallets"
+        },
+        "proposed_by": "agent:triage"
+      }
+    ],
+    [
+      "approve_action",
+      {
+        "action_id": "ACT-0002",
+        "reviewer": "lee.supervisor",
+        "reason": "Excursion confirmed by telemetry and the warehouse hold."
+      }
+    ],
+    [
+      "assess",
+      {
+        "signal_ids": [
+          "SIG-013"
+        ]
+      }
+    ],
+    [
+      "propose_action",
+      {
+        "assessment_id": "ASM-0002",
+        "action": {
+          "type": "hold_shipment",
+          "target": "air cargo apron"
+        },
+        "proposed_by": "agent:triage"
+      }
+    ],
+    [
+      "propose_action",
+      {
+        "assessment_id": "ASM-0002",
+        "action": {
+          "type": "increase_monitoring",
+          "target": "air cargo apron"
+        },
+        "proposed_by": "agent:triage"
+      }
+    ],
+    [
+      "reject_action",
+      {
+        "action_id": "ACT-0003",
+        "reviewer": "kim.audit",
+        "reason": "Fire service confirmed a false alarm."
+      }
+    ]
+  ],
+  "outcomes": [
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "POLICY_DENIED",
+    "ok",
+    "ok"
+  ],
+  "audit_length": 10,
+  "head_hash": "c991b318a04395e4bb5c849d6cd5c49fa06e4c07ac5c864be80b1a0ba1feccdb"
+}

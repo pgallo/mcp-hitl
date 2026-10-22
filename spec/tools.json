@@ -1,0 +1,289 @@
+{
+  "$comment": "Single source of truth for the tool contract. Both servers advertise these descriptions and must produce input/output schemas that normalize to the shapes below.",
+  "version": "1.0.0",
+  "error_codes": {
+    "NOT_FOUND": "Referenced signal, assessment or action does not exist.",
+    "INVALID_ARGUMENT": "Arguments are well-typed but semantically invalid (for example duplicate ids).",
+    "CONFLICT": "The action is not in a state that allows the requested transition.",
+    "POLICY_DENIED": "The approval policy forbids the request."
+  },
+  "$defs": {
+    "Timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "SignalKind": {
+      "type": "string",
+      "enum": ["delay", "sensor_anomaly", "supplier_notice", "customs_hold", "weather"]
+    },
+    "ActionType": {
+      "type": "string",
+      "enum": ["notify_team", "open_ticket", "increase_monitoring", "expedite_order", "reroute_shipment", "hold_shipment", "quarantine_stock"]
+    },
+    "Risk": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "ActionStatus": {
+      "type": "string",
+      "enum": ["pending_approval", "approved", "rejected"]
+    },
+    "Signal": {
+      "type": "object",
+      "required": ["id", "kind", "severity", "site", "lane", "source", "source_reliability", "observed_at", "title", "summary", "tags"],
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"$ref": "#/$defs/SignalKind"},
+        "severity": {"type": "integer", "minimum": 1, "maximum": 5},
+        "site": {"type": "string"},
+        "lane": {"type": ["string", "null"]},
+        "source": {"type": "string"},
+        "source_reliability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "observed_at": {"type": "string"},
+        "title": {"type": "string"},
+        "summary": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "SignalHit": {
+      "type": "object",
+      "required": ["id", "title", "kind", "severity", "site", "observed_at", "score"],
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "kind": {"$ref": "#/$defs/SignalKind"},
+        "severity": {"type": "integer"},
+        "site": {"type": "string"},
+        "observed_at": {"type": "string"},
+        "score": {"type": "integer"}
+      }
+    },
+    "Factors": {
+      "type": "object",
+      "required": ["max_severity", "mean_severity", "distinct_sources", "mean_reliability", "coherence"],
+      "properties": {
+        "max_severity": {"type": "integer"},
+        "mean_severity": {"type": "number"},
+        "distinct_sources": {"type": "integer"},
+        "mean_reliability": {"type": "number"},
+        "coherence": {"type": "number"}
+      }
+    },
+    "Assessment": {
+      "type": "object",
+      "required": ["assessment_id", "signal_ids", "score", "confidence", "band", "factors", "rationale", "created_at"],
+      "properties": {
+        "assessment_id": {"type": "string"},
+        "signal_ids": {"type": "array", "items": {"type": "string"}},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "band": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+        "factors": {"$ref": "#/$defs/Factors"},
+        "rationale": {"type": "array", "items": {"type": "string"}},
+        "created_at": {"type": "string"}
+      }
+    },
+    "PolicyVerdict": {
+      "type": "object",
+      "required": ["auto_approve_eligible", "explanation"],
+      "properties": {
+        "auto_approve_eligible": {"type": "boolean"},
+        "explanation": {"type": "string"}
+      }
+    },
+    "Decision": {
+      "type": "object",
+      "required": ["by", "reason", "at"],
+      "properties": {
+        "by": {"type": "string"},
+        "reason": {"type": "string"},
+        "at": {"type": "string"}
+      }
+    },
+    "Action": {
+      "type": "object",
+      "required": ["action_id", "assessment_id", "type", "target", "note", "risk", "status", "confidence", "proposed_by", "created_at", "policy", "decision"],
+      "properties": {
+        "action_id": {"type": "string"},
+        "assessment_id": {"type": "string"},
+        "type": {"$ref": "#/$defs/ActionType"},
+        "target": {"type": "string"},
+        "note": {"type": ["string", "null"]},
+        "risk": {"$ref": "#/$defs/Risk"},
+        "status": {"$ref": "#/$defs/ActionStatus"},
+        "confidence": {"type": "number"},
+        "proposed_by": {"type": "string"},
+        "created_at": {"type": "string"},
+        "policy": {"$ref": "#/$defs/PolicyVerdict"},
+        "decision": {"anyOf": [{"$ref": "#/$defs/Decision"}, {"type": "null"}]}
+      }
+    },
+    "AuditEntry": {
+      "type": "object",
+      "required": ["seq", "at", "event", "actor", "subject", "data", "prev_hash", "hash"],
+      "properties": {
+        "seq": {"type": "integer"},
+        "at": {"type": "string"},
+        "event": {"type": "string"},
+        "actor": {"type": "string"},
+        "subject": {"type": "string"},
+        "data": {"type": "object"},
+        "prev_hash": {"type": "string"},
+        "hash": {"type": "string"}
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "search_signals",
+      "description": "Keyword search over operational signals with optional filters. Empty query returns every signal that passes the filters. Results are ordered by score, then severity, then id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "filters": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {"anyOf": [{"type": "array", "items": {"$ref": "#/$defs/SignalKind"}}, {"type": "null"}]},
+                  "site": {"type": ["string", "null"]},
+                  "min_severity": {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 5}, {"type": "null"}]},
+                  "since": {"anyOf": [{"$ref": "#/$defs/Timestamp"}, {"type": "null"}]}
+                }
+              },
+              {"type": "null"}
+            ]
+          },
+          "limit": {"type": "integer", "minimum": 1, "maximum": 50}
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["total", "results"],
+        "properties": {
+          "total": {"type": "integer"},
+          "results": {"type": "array", "items": {"$ref": "#/$defs/SignalHit"}}
+        }
+      }
+    },
+    {
+      "name": "get_signal",
+      "description": "Return one signal by id.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {"id": {"type": "string"}}
+      },
+      "outputSchema": {"$ref": "#/$defs/Signal"}
+    },
+    {
+      "name": "assess",
+      "description": "Score a group of 1 to 10 signals as one situation. Returns an impact score, a heuristic confidence (not a calibrated probability), a band and a factor-by-factor rationale. Recorded in the audit log.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["signal_ids"],
+        "properties": {
+          "signal_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 10}
+        }
+      },
+      "outputSchema": {"$ref": "#/$defs/Assessment"}
+    },
+    {
+      "name": "propose_action",
+      "description": "Propose an action for an assessment. The policy classifies it by risk: low-risk actions above the confidence threshold are auto-approved, everything else is created as pending_approval and waits for a human. Recorded in the audit log.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["assessment_id", "action"],
+        "properties": {
+          "assessment_id": {"type": "string"},
+          "action": {
+            "type": "object",
+            "required": ["type", "target"],
+            "properties": {
+              "type": {"$ref": "#/$defs/ActionType"},
+              "target": {"type": "string", "minLength": 1},
+              "note": {"type": ["string", "null"]}
+            }
+          },
+          "proposed_by": {"type": "string", "minLength": 1}
+        }
+      },
+      "outputSchema": {"$ref": "#/$defs/Action"}
+    },
+    {
+      "name": "approve_action",
+      "description": "Approve a pending action. Requires a reviewer name and a reason; the policy may require a minimum reason length and a reviewer different from the proposer. Recorded in the audit log.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["action_id", "reviewer", "reason"],
+        "properties": {
+          "action_id": {"type": "string"},
+          "reviewer": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      },
+      "outputSchema": {"$ref": "#/$defs/Action"}
+    },
+    {
+      "name": "reject_action",
+      "description": "Reject a pending action. Requires a reviewer name and a reason. Recorded in the audit log.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["action_id", "reviewer", "reason"],
+        "properties": {
+          "action_id": {"type": "string"},
+          "reviewer": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      },
+      "outputSchema": {"$ref": "#/$defs/Action"}
+    },
+    {
+      "name": "list_actions",
+      "description": "List proposed actions in creation order, optionally filtered by status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {"anyOf": [{"$ref": "#/$defs/ActionStatus"}, {"type": "null"}]}
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["actions"],
+        "properties": {
+          "actions": {"type": "array", "items": {"$ref": "#/$defs/Action"}}
+        }
+      }
+    },
+    {
+      "name": "list_audit",
+      "description": "Return audit entries from the append-only, hash-chained log, plus the head hash and the result of verifying the whole chain.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "since_seq": {"type": "integer", "minimum": 0},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 500}
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["length", "head_hash", "chain_valid", "entries"],
+        "properties": {
+          "length": {"type": "integer"},
+          "head_hash": {"type": "string"},
+          "chain_valid": {"type": "boolean"},
+          "entries": {"type": "array", "items": {"$ref": "#/$defs/AuditEntry"}}
+        }
+      }
+    }
+  ],
+  "resources": [
+    {"uri": "audit://log", "name": "audit-log", "mimeType": "application/json", "description": "The full audit log as a JSON array of hash-chained entries."},
+    {"uri": "audit://verify", "name": "audit-verify", "mimeType": "application/json", "description": "Result of recomputing every hash in the audit chain."},
+    {"uri": "policy://current", "name": "approval-policy", "mimeType": "application/json", "description": "The approval policy in force (risk tiers and thresholds)."}
+  ],
+  "prompts": [
+    {"name": "triage", "description": "Step-by-step triage instructions for an agent working the evidence workspace.", "arguments": [{"name": "site", "description": "Restrict triage to one site, for example HUB-KESSEL.", "required": false}]}
+  ]
+}

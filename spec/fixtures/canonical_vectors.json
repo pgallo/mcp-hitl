@@ -1,0 +1,79 @@
+{
+  "description": "Canonical JSON test vectors. Both implementations must reproduce `canonical` and `sha256` exactly.",
+  "vectors": [
+    {
+      "name": "scalars",
+      "value": [
+        null,
+        true,
+        false,
+        0,
+        -7,
+        42
+      ],
+      "canonical": "[null,true,false,0,-7,42]",
+      "sha256": "741ff7137dd39e3d4510292aa9741245303fee9b708a5c0822e3ca4785ba4797"
+    },
+    {
+      "name": "floats",
+      "value": [
+        0.1,
+        0.8983,
+        3.6667,
+        79.6667,
+        0.475,
+        1.0,
+        2.5,
+        1e-07,
+        123456.789
+      ],
+      "canonical": "[0.1,0.8983,3.6667,79.6667,0.475,1,2.5,1e-7,123456.789]",
+      "sha256": "958414e4a3257d4456210d9b7a9cff33f0c85fbbcb3529201fab46575414415f"
+    },
+    {
+      "name": "key order",
+      "value": {
+        "b": 1,
+        "a": {
+          "z": [],
+          "y": {}
+        },
+        "A": "upper first"
+      },
+      "canonical": "{\"A\":\"upper first\",\"a\":{\"y\":{},\"z\":[]},\"b\":1}",
+      "sha256": "b6a82b10a9e084f9cbdf48ec4922ece18d8ed7d81f98d3e738c43d93433f0655"
+    },
+    {
+      "name": "unicode and escapes",
+      "value": {
+        "text": "quote \" backslash \\ newline \n tab \t",
+        "accents": "caffè ü ñ",
+        "cjk": "物流",
+        "emoji_free": "plain"
+      },
+      "canonical": "{\"accents\":\"caffè ü ñ\",\"cjk\":\"物流\",\"emoji_free\":\"plain\",\"text\":\"quote \\\" backslash \\\\ newline \\n tab \\t\"}",
+      "sha256": "189b8ebf9225fddd8bd3708805884cff6172dc5cab90048fba67e5eeb82b3db2"
+    },
+    {
+      "name": "audit-like entry",
+      "value": {
+        "seq": 2,
+        "at": "2026-03-02T09:00:01Z",
+        "event": "assessment.created",
+        "actor": "workspace",
+        "subject": "ASM-0001",
+        "data": {
+          "signal_ids": [
+            "SIG-001"
+          ],
+          "score": 0.84,
+          "confidence": 0.6,
+          "band": "critical"
+        },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "canonical": "{\"actor\":\"workspace\",\"at\":\"2026-03-02T09:00:01Z\",\"data\":{\"band\":\"critical\",\"confidence\":0.6,\"score\":0.84,\"signal_ids\":[\"SIG-001\"]},\"event\":\"assessment.created\",\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"seq\":2,\"subject\":\"ASM-0001\"}",
+      "sha256": "1ac040120edda464cee1b632266259b01b7e3311a770cd9ff2e0ff9daaef753f"
+    }
+  ]
+}

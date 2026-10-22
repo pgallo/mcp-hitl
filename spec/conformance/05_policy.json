@@ -1,0 +1,33 @@
+{
+  "description": "Risk tiers: auto-approval threshold, human-only tiers, proposal floors",
+  "steps": [
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001", "SIG-002", "SIG-003"]}, "save": {"strong": "assessment_id"}, "label": "strong evidence (confidence 0.9)"},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-013"]}, "save": {"weak": "assessment_id"}, "label": "weak evidence (confidence 0.475)"},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001"]}, "save": {"capped": "assessment_id"}, "label": "capped evidence (confidence 0.6)"},
+    {"tool": "propose_action", "args": {"assessment_id": "${strong}", "action": {"type": "notify_team", "target": "HUB-KESSEL"}, "proposed_by": "agent:triage"},
+     "label": "low risk above threshold is auto-approved",
+     "expect": {"equals": {"action_id": "ACT-0001", "risk": "low", "status": "approved", "decision.by": "policy:auto", "policy.auto_approve_eligible": true, "policy.explanation": "low risk and confidence 0.9 >= 0.75: auto-approved", "note": null}}},
+    {"tool": "propose_action", "args": {"assessment_id": "${weak}", "action": {"type": "open_ticket", "target": "HUB-ISEN"}, "proposed_by": "agent:triage"},
+     "label": "low risk below threshold waits for a human",
+     "expect": {"equals": {"risk": "low", "status": "pending_approval", "decision": null, "policy.explanation": "low risk but confidence 0.475 < 0.75: human approval required"}}},
+    {"tool": "propose_action", "args": {"assessment_id": "${strong}", "action": {"type": "quarantine_stock", "target": "bay K3", "note": "22 pallets"}, "proposed_by": "agent:triage"},
+     "label": "high risk is always human even at 0.9 confidence",
+     "expect": {"equals": {"risk": "high", "status": "pending_approval", "note": "22 pallets", "policy.auto_approve_eligible": false, "policy.explanation": "high risk: human approval always required"}}},
+    {"tool": "propose_action", "args": {"assessment_id": "${weak}", "action": {"type": "hold_shipment", "target": "air cargo apron"}, "proposed_by": "agent:triage"},
+     "label": "high risk below proposal floor is denied outright",
+     "expect": {"error": "POLICY_DENIED", "error_contains": "high risk requires confidence >= 0.5 to propose, assessment has 0.475"}},
+    {"tool": "propose_action", "args": {"assessment_id": "${capped}", "action": {"type": "expedite_order", "target": "C-55"}},
+     "label": "medium risk above floor is pending, default proposer applied",
+     "expect": {"equals": {"risk": "medium", "status": "pending_approval", "proposed_by": "agent:unknown"}}},
+    {"tool": "propose_action", "args": {"assessment_id": "ASM-9999", "action": {"type": "notify_team", "target": "x"}},
+     "label": "unknown assessment",
+     "expect": {"error": "NOT_FOUND"}},
+    {"tool": "propose_action", "args": {"assessment_id": "${strong}", "action": {"type": "notify_team", "target": "   "}},
+     "label": "blank target after trimming",
+     "expect": {"error": "INVALID_ARGUMENT"}},
+    {"tool": "list_actions", "args": {"status": "pending_approval"}, "label": "pending queue",
+     "expect": {"length": {"actions": 3}, "each": {"actions": {"status": "pending_approval"}}}},
+    {"resource": "policy://current", "label": "policy resource exposes the tiers",
+     "expect": {"equals": {"action_types.reroute_shipment.risk": "high", "risk_tiers.low.auto_approve_min_confidence": 0.75}}}
+  ]
+}

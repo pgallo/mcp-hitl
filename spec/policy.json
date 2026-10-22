@@ -1,0 +1,33 @@
+{
+  "$comment": "Approval policy shared by both servers. Changing a threshold here changes behaviour in both implementations; the conformance suite pins the current values.",
+  "version": "2026-03-01",
+  "action_types": {
+    "notify_team": {"risk": "low"},
+    "open_ticket": {"risk": "low"},
+    "increase_monitoring": {"risk": "low"},
+    "expedite_order": {"risk": "medium"},
+    "reroute_shipment": {"risk": "high"},
+    "hold_shipment": {"risk": "high"},
+    "quarantine_stock": {"risk": "high"}
+  },
+  "risk_tiers": {
+    "low": {
+      "auto_approve_min_confidence": 0.75,
+      "min_confidence_to_propose": 0.0,
+      "min_reason_length": 1,
+      "separation_of_duties": false
+    },
+    "medium": {
+      "auto_approve_min_confidence": null,
+      "min_confidence_to_propose": 0.4,
+      "min_reason_length": 10,
+      "separation_of_duties": true
+    },
+    "high": {
+      "auto_approve_min_confidence": null,
+      "min_confidence_to_propose": 0.5,
+      "min_reason_length": 20,
+      "separation_of_duties": true
+    }
+  }
+}

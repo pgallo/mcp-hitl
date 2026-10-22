@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+
+      - name: Install Python packages
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements-dev.txt
+
+      - name: Install and build TypeScript server
+        working-directory: typescript
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Lint and type-check Python
+        run: |
+          .venv/bin/ruff check python agent conformance
+          .venv/bin/ruff format --check python agent conformance
+          .venv/bin/mypy --strict --ignore-missing-imports python/src agent/src
+
+      - name: vitest (TypeScript server)
+        working-directory: typescript
+        run: npm test
+
+      - name: pytest (Python server, agent, conformance wrapper)
+        run: .venv/bin/python -m pytest -q
+
+      - name: Conformance suite against both servers
+        run: .venv/bin/python conformance/run.py
+
+      - name: Agent demo against both servers (auto-reject)
+        run: |
+          .venv/bin/hitl-agent --server python --auto-reject --fixed-clock 2026-03-02T09:00:00Z
+          .venv/bin/hitl-agent --server typescript --auto-reject --fixed-clock 2026-03-02T09:00:00Z

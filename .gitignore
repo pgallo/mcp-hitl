@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+typescript/dist/
+*.tsbuildinfo
+
+# Runtime output
+*.jsonl
+!spec/fixtures/*.jsonl
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store

@@ -1,0 +1,17 @@
+{
+  "description": "Both servers enforce the input schema strictly (no type coercion)",
+  "steps": [
+    {"tool": "search_signals", "args": {"limit": 0}, "expect": {"error": "INVALID_INPUT"}, "label": "limit below minimum"},
+    {"tool": "search_signals", "args": {"limit": "5"}, "expect": {"error": "INVALID_INPUT"}, "label": "string is not coerced to integer"},
+    {"tool": "search_signals", "args": {"filters": {"kind": ["earthquake"]}}, "expect": {"error": "INVALID_INPUT"}, "label": "unknown enum value"},
+    {"tool": "search_signals", "args": {"filters": {"since": "yesterday"}}, "expect": {"error": "INVALID_INPUT"}, "label": "timestamp pattern"},
+    {"tool": "assess", "args": {"signal_ids": []}, "expect": {"error": "INVALID_INPUT"}, "label": "empty group"},
+    {"tool": "assess", "args": {"signal_ids": ["SIG-001","SIG-002","SIG-003","SIG-004","SIG-005","SIG-006","SIG-007","SIG-008","SIG-009","SIG-010","SIG-011"]}, "expect": {"error": "INVALID_INPUT"}, "label": "group larger than 10"},
+    {"tool": "get_signal", "args": {}, "expect": {"error": "INVALID_INPUT"}, "label": "missing required argument"},
+    {"tool": "propose_action", "args": {"assessment_id": "ASM-0001", "action": {"type": "launch_rocket", "target": "x"}}, "expect": {"error": "INVALID_INPUT"}, "label": "unknown action type"},
+    {"tool": "list_actions", "args": {"status": "maybe"}, "expect": {"error": "INVALID_INPUT"}, "label": "unknown status"},
+    {"tool": "does_not_exist", "args": {}, "expect": {"error": "UNKNOWN_TOOL"}, "label": "unknown tool"},
+    {"tool": "list_audit", "args": {}, "label": "rejected inputs never reach the workspace",
+     "expect": {"equals": {"length": 1}}}
+  ]
+}

@@ -1,0 +1,8 @@
+line-length = 140
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "W"]
+
+[lint.isort]
+known-first-party = ["hitl_server", "hitl_agent", "harness", "schema_norm"]
