@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from hitl_agent.planner import Group, HostedLLMPlanner, StubPlanner, make_planner
+import pytest
+
+from hitl_agent.planner import Group, HostedPlanner, StubPlanner, extract_chat_text, make_planner
 
 
 def _signals() -> dict:
@@ -29,8 +31,8 @@ def test_high_band_adds_containment_with_fallback() -> None:
     assert proposals[1].fallback is not None and proposals[1].fallback.type == "increase_monitoring"
 
 
-def test_llm_planner_falls_back_on_bad_output(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    planner = HostedLLMPlanner(api_key="test")
+def test_hosted_planner_falls_back_on_bad_output(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    planner = HostedPlanner(url="http://localhost.invalid/v1/chat/completions", api_key="test", model="test-model")
     sig = _signals()
     group = Group("site S1", ["C"])
     assessment = {"band": "critical", "score": 0.9, "confidence": 0.9, "rationale": []}
@@ -43,5 +45,21 @@ def test_llm_planner_falls_back_on_bad_output(monkeypatch) -> None:  # type: ign
 
 
 def test_default_planner_needs_no_key(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    for name in ("LLM_API_URL", "LLM_API_KEY", "LLM_MODEL"):
+        monkeypatch.delenv(name, raising=False)
     assert make_planner("stub").name == "stub"
+    with pytest.raises(SystemExit):
+        make_planner("hosted")
+    # No defaults for URL or model: a key alone is not enough.
+    monkeypatch.setenv("LLM_API_KEY", "test")
+    with pytest.raises(SystemExit):
+        make_planner("hosted")
+    monkeypatch.setenv("LLM_API_URL", "http://localhost.invalid/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "test-model")
+    assert make_planner("hosted").name == "hosted"
+
+
+def test_extract_chat_text() -> None:
+    assert extract_chat_text({"choices": [{"message": {"content": "hi"}}]}) == "hi"
+    assert extract_chat_text({"choices": []}) == ""
+    assert extract_chat_text({"unexpected": True}) == ""

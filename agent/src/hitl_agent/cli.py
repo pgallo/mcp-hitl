@@ -38,13 +38,14 @@ async def run(command: list[str], args: argparse.Namespace, approver: Approver) 
         env["HITL_CLOCK"] = f"fixed:{args.fixed_clock}"
     if args.audit_path:
         env["HITL_AUDIT_PATH"] = str(Path(args.audit_path).resolve())
+    planner = make_planner(args.planner)  # fail fast, before the server starts, if it is not configured
     params = StdioServerParameters(command=command[0], args=command[1:], env=env, cwd=str(ROOT))
     with open(os.devnull, "w") as devnull:
         async with stdio_client(params, errlog=devnull) as (read, write), ClientSession(read, write) as session:
             init = await session.initialize()
             print(f"Connected to {init.serverInfo.name} {init.serverInfo.version} via: {shlex.join(command)}")
             print(f"Planner: {args.planner}. Approvals: {args.mode}.")
-            report = await run_triage(Tools(session), make_planner(args.planner), approver, min_severity=args.min_severity, site=args.site)
+            report = await run_triage(Tools(session), planner, approver, min_severity=args.min_severity, site=args.site)
     render_audit(report)
     return 0 if report.verify.get("valid") else 1
 
@@ -58,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--auto-reject", action="store_true", help="reject every pending action (CI)")
     mode.add_argument("--approve-all", action="store_true", help="approve every pending action (demo)")
     parser.add_argument("--reviewer", help="reviewer identity recorded in the audit log")
-    parser.add_argument("--planner", choices=["stub", "llm"], default="stub")
+    parser.add_argument("--planner", choices=["stub", "hosted"], default="stub")
     parser.add_argument("--min-severity", type=int, default=3)
     parser.add_argument("--site")
     parser.add_argument("--fixed-clock", metavar="ISO", help="deterministic server clock, e.g. 2026-03-02T09:00:00Z")

@@ -128,7 +128,7 @@ Both servers print the same head hash for this run.
 
 6. **The planner proposes, only a human decides.**
    *Decision:* the agent loop calls `approve_action` and `reject_action` only with a verdict from an `Approver`. Automated identities (`agent:*`, `policy:*`) cannot sign decisions, and the proposer cannot approve their own medium or high risk action.
-   *Why:* swapping the deterministic planner for an optional hosted LLM provider changes what gets proposed, never who approves it. The LLM planner's output is parsed defensively: anything outside the allowed action set, including an attempt to name an approval tool, falls back to the deterministic plan.
+   *Why:* swapping the deterministic planner for an optional hosted LLM provider changes what gets proposed, never who approves it. The hosted planner's output is parsed defensively: anything outside the allowed action set, including an attempt to name an approval tool, falls back to the deterministic plan.
    *Trade-off:* a human queue adds latency to every non-trivial action, and reviewers can rubber-stamp. The minimum reason length and the audit trail make rubber-stamping visible, but they do not prevent it.
 
 ## Scope and limits
@@ -138,7 +138,7 @@ Both servers print the same head hash for this run.
 - Single-writer by design: no concurrency control, no multi-tenant isolation.
 - The audit chain detects tampering but is not externally anchored (see decision 3).
 - Search is weighted keyword matching over 50 signals. Retrieval quality is not the point of this lab.
-- The hosted LLM planner is optional and exercised in tests only through its fallback paths. No test or CI step makes a network call.
+- The hosted planner (`--planner hosted`) is optional. It calls a JSON chat-completions style endpoint configured only through `LLM_API_URL`, `LLM_API_KEY` and `LLM_MODEL` (no defaults; if any is missing the option exits with a clear error) and uses only the Python standard library. It is exercised in tests only through its fallback and configuration paths. No test or CI step makes a network call.
 - Canonical JSON relies on both runtimes ordering keys the same way, which holds for every key outside the astral Unicode planes. All keys this system emits are ASCII.
 - The dataset is entirely synthetic: sites, suppliers, carriers and events are invented.
 

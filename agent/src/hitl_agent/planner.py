@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import urllib.request
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -79,18 +80,46 @@ class StubPlanner:
         return [notify]
 
 
-class HostedLLMPlanner(StubPlanner):
-    """Optional planner backed by a hosted LLM. Grouping stays deterministic; only the
-    action choice is delegated, and any malformed answer falls back to the stub rules."""
+HOSTED_ENV = ("LLM_API_URL", "LLM_API_KEY", "LLM_MODEL")
+HOSTED_MISSING = "--planner hosted needs LLM_API_URL, LLM_API_KEY and LLM_MODEL; the default stub planner needs nothing"
 
-    name = "llm"
+
+def hosted_config() -> tuple[str, str, str] | None:
+    """(url, key, model) from the environment, or None if any of them is missing."""
+    url, key, model = (os.environ.get(name, "").strip() for name in HOSTED_ENV)
+    if not (url and key and model):
+        return None
+    return url, key, model
+
+
+def extract_chat_text(data: Any) -> str:
+    """Text of the first choice in a chat-completions style response, or "" if absent."""
+    try:
+        content = data["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError):
+        return ""
+    if isinstance(content, list):
+        return "".join(str(part.get("text", "")) for part in content if isinstance(part, dict))
+    return str(content or "")
+
+
+class HostedPlanner(StubPlanner):
+    """Optional planner backed by a hosted model behind a JSON chat-completions style endpoint.
+
+    Configured only through LLM_API_URL, LLM_API_KEY and LLM_MODEL; the HTTP call uses the
+    standard library. Grouping stays deterministic; only the action choice is delegated, and
+    any malformed answer falls back to the stub rules."""
+
+    name = "hosted"
     _ALLOWED = frozenset(
         {"notify_team", "open_ticket", "increase_monitoring", "expedite_order", "reroute_shipment", "hold_shipment", "quarantine_stock"}
     )
 
-    def __init__(self, api_key: str, model: str | None = None) -> None:
+    def __init__(self, url: str, api_key: str, model: str, timeout: float = 30.0) -> None:
+        self.url = url
         self.api_key = api_key
-        self.model = model or os.environ.get("HITL_LLM_MODEL", "claude-haiku-5-5")
+        self.model = model
+        self.timeout = timeout
 
     def propose(self, group: Group, assessment: dict[str, Any], signals: dict[str, dict[str, Any]]) -> list[Proposal]:
         baseline = super().propose(group, assessment, signals)
@@ -108,8 +137,6 @@ class HostedLLMPlanner(StubPlanner):
             return baseline
 
     def _complete(self, group: Group, assessment: dict[str, Any], signals: dict[str, dict[str, Any]]) -> str:
-        import httpx  # optional dependency, imported only when this planner is selected
-
         evidence = [{k: signals[i][k] for k in ("id", "kind", "severity", "title", "source")} for i in group.signal_ids]
         prompt = (
             "You are proposing one operational action for a logistics situation. A human will approve or reject it.\n"
@@ -118,20 +145,22 @@ class HostedLLMPlanner(StubPlanner):
             f"Choose one action from {sorted(self._ALLOWED)} and answer only with JSON: "
             '{"action": "...", "note": "one sentence"}'
         )
-        response = httpx.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={"x-api-key": self.api_key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-            json={"model": self.model, "max_tokens": 200, "messages": [{"role": "user", "content": prompt}]},
-            timeout=30,
+        body = json.dumps({"model": self.model, "max_tokens": 200, "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+        request = urllib.request.Request(
+            self.url,
+            data=body,
+            method="POST",
+            headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
         )
-        response.raise_for_status()
-        return "".join(block.get("text", "") for block in response.json().get("content", []))
+        with urllib.request.urlopen(request, timeout=self.timeout) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        return extract_chat_text(data)
 
 
 def make_planner(kind: str) -> Planner:
-    if kind == "llm":
-        key = os.environ.get("ANTHROPIC_API_KEY")
-        if not key:
-            raise SystemExit("--planner llm needs ANTHROPIC_API_KEY; the default stub planner needs nothing")
-        return HostedLLMPlanner(key)
+    if kind == "hosted":
+        config = hosted_config()
+        if config is None:
+            raise SystemExit(HOSTED_MISSING)
+        return HostedPlanner(*config)
     return StubPlanner()
